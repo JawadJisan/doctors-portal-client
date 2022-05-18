@@ -4,6 +4,7 @@ import { useCreateUserWithEmailAndPassword, useSignInWithEmailAndPassword, useSi
 import { useForm } from "react-hook-form";
 import Loading from '../Shared/Loading';
 import { Link, useNavigate } from 'react-router-dom';
+import UseToken from '../../Hooks/UseToken';
 
 
 
@@ -21,15 +22,15 @@ const Signup = () => {
 
   const [updateProfile, updating, uerror] = useUpdateProfile(auth);
 
+  const [token] = UseToken(user || guser)
+
   const navigate = useNavigate();
   let signInError;
 
   const onSubmit = async data => {
-    console.log(data)
     await createUserWithEmailAndPassword(data.email, data.password);
     await updateProfile({ displayName: data.name });
-    console.log('dis',data.name );
-    navigate('/appointment')
+    // console.log('dis',data.name );
 
   };
   if(loading || gloading || updating){
@@ -41,8 +42,9 @@ const Signup = () => {
 
 
 
-  if (guser || user) {
-    console.log(guser || user)
+  if (token) {
+    navigate('/appointment')
+
   }
 
   

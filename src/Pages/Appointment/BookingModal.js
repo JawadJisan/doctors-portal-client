@@ -2,11 +2,11 @@ import { format } from 'date-fns';
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
-import { ToastContainer, toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 
 const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
-    const { _id, name, slots } = treatment;
+    const { _id, name, slots, price } = treatment;
     const [user] = useAuthState(auth);
     console.log('aa', user.displayName)
 
@@ -26,13 +26,13 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
             treatmentId: _id,
             treatment: name,
             date: formatedDate,
-            slot,
+            slot,price,
             patient: user.email,
             patientName: user.displayName,
             phone: event.target.phone.value,  
         }
 
-        fetch('http://localhost:5000/booking',{
+        fetch('https://calm-escarpment-43051.herokuapp.com/booking',{
             method: 'POST',
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
@@ -44,11 +44,11 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
         .then(res => res.json())
         .then(data =>{
             if(data.success){
-                alert(`Appointment is set, ${formatedDate} at ${slot}`)
+                toast(`Appointment is set, ${formatedDate} at ${slot}`)
                 console.log(data)
             }
             else{
-                alert(`You Already Have an Appointment on, ${data.booking?.date} at ${data.booking?.slot}`)
+                toast(`You Already Have an Appointment on, ${data.booking?.date} at ${data.booking?.slot}`)
                 console.log(data)
 
             }
@@ -83,7 +83,6 @@ const BookingModal = ({ treatment, date, setTreatment, refetch }) => {
                         <input type="email" name='email' disabled value={user?.email || ''} placeholder="Email Address" className="input input-bordered w-full max-w-xs" />
                         <input type="text" name='phone' placeholder="Your Mobile No" className="input input-bordered w-full max-w-xs" />
                         <input type="submit" value='Submit' className="btn btn-secondary w-full max-w-xs" />
-                        <ToastContainer />
 
                     </form>
                 </div>
